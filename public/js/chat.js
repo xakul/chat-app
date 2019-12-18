@@ -16,11 +16,13 @@ document.querySelector('#message-form').addEventListener('submit' , (e) => {
     
     //Server-side kısmına girdiğimiz mesajı gönderiyoruz
     socket.emit('sendMessage', message, (error) => {
+
+        //Callback fonksyonu olarak error yollarız
             if(error)
             {
                 return console.log(error)
             }
-        console.log('Message delivered', error)
+        console.log('Message delivered')
 
     })
 
