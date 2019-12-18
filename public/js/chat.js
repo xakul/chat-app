@@ -15,7 +15,14 @@ document.querySelector('#message-form').addEventListener('submit' , (e) => {
     const message = e.target.elements.message.value
     
     //Server-side kısmına girdiğimiz mesajı gönderiyoruz
-    socket.emit('sendMessage', message)
+    socket.emit('sendMessage', message, (error) => {
+            if(error)
+            {
+                return console.log(error)
+            }
+        console.log('Message delivered', error)
+
+    })
 
 })
 
