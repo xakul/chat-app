@@ -5,6 +5,8 @@ const http = require('http')
 const path = require('path')
 const socketio = require('socket.io')
 const Filter = require('bad-words')
+const {generateMessage} = require('./utils/messages')
+const {generateLocationMessage} = require('./utils/generateLocationMessage')
 
 
 
@@ -12,7 +14,7 @@ const app = express ()
 const server = http.createServer(app)
 const io = socketio(server)
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 1000
 const publicDirectoryPath = path.join(__dirname,'../public')
 
 let count = 0
@@ -23,11 +25,11 @@ io.on('connection' , (socket) => {
 console.log('New socket connection')
 
 //Message eventi içinde 'welcome' bir string gönderiyoruz
-socket.emit('message' , 'welcome !')
+socket.emit('message' , generateMessage('Welcome'))
 
 
 //Broadcast kullanarak kendi client kullanıcım hariç diğerlerinin bu mesajı almasını sağlarız
-socket.broadcast.emit('message', 'New user joined')
+socket.broadcast.emit('message', generateMessage('New user joined'))
 
 
 
@@ -42,20 +44,20 @@ socket.on('sendMessage', (message, callback) => {
         return callback('Kufur edemezsin')
    }
 
-  io.emit('message', message)
+  io.emit('message', generateMessage(message))
   callback()
 
  })
 
  //sendLocation eventinden gelen parametrik objeyi alır ve emit eder
-socket.on('sendLocation', (coords) => {
+socket.on('sendLocation', (coords, callback) => {
       console.log('Server gets the message')
-      io.emit('message', `https://google.com/maps?q=${coords.latitude},${coords.longitude}`)
-
+      io.emit('locationMessage', generateLocationMessage(`https://google.com/maps?q=${coords.latitude},${coords.longitude}`))
+      
 })
 
  socket.on('disconnect' , () => {
-      io.emit('message', 'A user has left the room')
+      io.emit('message', generateMessage('A user has left the room'))
 
  })  
 
